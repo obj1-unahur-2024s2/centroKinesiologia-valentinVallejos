@@ -1,9 +1,207 @@
-import example.pepita
+import pasientes.*
+import aparatos.*
+import centro.*
 
-describe "group of tests for pepita" {
+describe "test parte 1 " {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  method initialize(){
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20)
+    const milena = new Pasientes(edad = 3 , dolor = 30, fortaleza = 50)
+
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+  }
+  test "leonardo puede usar los 3 aparatos" {
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20)
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+    
+    assert.that(leonardo.puedeUsar(m))
+    assert.that(leonardo.puedeUsar(b))
+    assert.that(leonardo.puedeUsar(mi))
+
   }
 
+  test "milena solo puede usar el magneto" {
+    const milena = new Pasientes(edad = 3 , dolor = 30, fortaleza = 50)
+
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+
+    assert.that(milena.puedeUsar(m))
+    assert.notThat(milena.puedeUsar(b))
+    assert.notThat(milena.puedeUsar(mi))
+  }
+
+  test "el dolor de leonardo baja a 9 con el magneto" {
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20)
+    const m = new Magneto()
+    leonardo.usarAparato(m)
+
+    assert.equals(9, leonardo.dolor())
+
+  }
+
+
+  test "el dolor de milena baj a 27 al usar el magneto" {
+    const milena = new Pasientes(edad = 3 , dolor = 30, fortaleza = 50)
+    const m = new Magneto()
+
+    milena.usarAparato(m)
+
+    assert.equals(27, milena.dolor())
+
+  }
+
+  test "el dolor de leonardo baj a 6 y su fortaleza sube a 23 al usar la bici" {
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20)
+    const b = new Bicicleta()
+    leonardo.usarAparato(b)
+
+    assert.equals(6, leonardo.dolor())
+    assert.equals(23, leonardo.fortaleza())
+  }
+
+  test "la fortaleza de leonardo sube a 27 despues de usar la minitramp" {
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20)
+    const mn = new Minitramp()
+    leonardo.usarAparato(mn)
+
+    assert.equals(24, leonardo.fortaleza())
+  }
+}
+
+describe "test parte 2" {
+  test "Leonardo puede hacer la rutina que tiene asignada. Después de hacerla una vez, su nivel de dolor baja a 1.8, y su fortaleza sube a 30." {
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+    const leonardo = new Pasientes(edad = 40, dolor = 10, fortaleza = 20, rutina = [b,mi,b,m])
+
+    assert.that(leonardo.puedeHacerRutina())
+    leonardo.hacerRutina()
+    assert.equals(1.8, leonardo.dolor())
+    assert.equals(30, leonardo.fortaleza())
+    
+  }
+
+  test "milena no puede hacer su rutina" {
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const milena = new Pasientes(edad = 3 , dolor = 30, fortaleza = 50 , rutina = [m ,b])
+
+    assert.notThat(milena.puedeHacerRutina())
+  }
+}
+
+
+describe "test parte 3" {
+
+  /*Nicolás es un paciente resistente, edad 40, dolor 10, fortaleza 20, la misma rutina que Leonardo, con los mismos aparatos.
+Victoria es una paciente caprichosa, edad 30, dolor 10, fortaleza 40, la misma rutina que Leonardo, con los mismos aparatos.
+Julián es un paciente caprichoso, edad 20, dolor 54, fortaleza 50. La rutina consiste en: una bicicleta roja, un magneto verde, una bicicleta blanca.
+Zoe es una paciente de rápidad recuperación, edad 50, dolor 14, fortaleza 40, la misma rutina que Leonardo, con los mismos aparatos.*/
+  test "Nicolás puede hacer la rutina que tiene asignada. Después de hacerla una vez, su nivel de dolor baja a 1.8, y su fortaleza sube a 34." {
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+    const nicolas = new PasienteResistente(edad = 40, dolor = 10, fortaleza = 20 , rutina = [b,mi,b,m])
+
+
+    assert.that(nicolas.puedeHacerRutina())
+    nicolas.hacerRutina()
+    assert.equals(1.8, nicolas.dolor())
+    assert.equals(34, nicolas.fortaleza())
+
+  }
+
+  test "Victoria no puede hacer la rutina que tiene asignada." {
+     const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+
+    const victoria = new PasienteCaprichoso(edad = 30, dolor = 10, fortaleza = 40 , rutina = [b,mi,b,m])
+
+    assert.notThat(victoria.puedeHacerRutina())
+  }
+
+  test "ulián puede hacer la rutina que tiene asignada. Después de hacerla una vez, su nivel de dolor baja a 29.3, y su fortaleza sube a 62." {
+    const b = new Bicicleta()
+    const br = new Bicicleta(color = "rojo")
+    const mv = new Magneto(color = "verde")
+    
+    const julian = new PasienteCaprichoso(edad = 20, dolor = 54, fortaleza = 50 , rutina = [b,mv,br])
+
+    assert.that(julian.puedeHacerRutina())
+
+    julian.hacerRutina()
+    assert.equals(29.3, julian.dolor())
+    assert.equals(62, julian.fortaleza())
+
+  } 
+
+  test "Zoe puede hacer la rutina que tiene asignada. Después de asignar a 2 el valor de decremento de dolor para 
+        pacientes de rápida recuperación, y de que Zoe haga su rutinauna vez, su nivel de dolor baja a 3.4, y su fortaleza sube a 51." {
+
+    const b = new Bicicleta()
+    const m = new Magneto()
+    const mi = new Minitramp()
+
+    const zoe = new PasienteDeRapidaRecuperacion(edad = 50, dolor = 14, fortaleza = 40 , valorDeRecuperacion = 2, rutina = [b,mi,b,m])
+
+    assert.that(zoe.puedeHacerRutina())
+
+    zoe.hacerRutina()
+    assert.equals(3.4, zoe.dolor())
+    assert.equals(51, zoe.fortaleza())
+    
+  }
+}
+
+describe "test centro" {
+  test "colores sin rep" {
+    const b = new Bicicleta()
+    const br = new Bicicleta(color = "rojo")
+    const mv = new Magneto(color = "verde")
+    const mg = new Magneto(color = "rojo")
+
+    centro.agregarAparato(b)
+    centro.agregarAparato(br)
+    centro.agregarAparato(mv)
+    centro.agregarAparato(mg)
+   
+   assert.equals(#{"blanco","rojo","verde"}, centro.colores()) 
+    
+  }
+
+  test "esta complicado" {
+     const br = new Bicicleta(color = "rojo",tornillosDesajustados = 11, perdidasDeAceite = 6)
+    const mv = new Magneto(color = "verde" , imantacion = 99)
+    const mg = new Magneto(color = "rojo")
+
+    centro.agregarAparato(br)
+    centro.agregarAparato(mv)
+    centro.agregarAparato(mg)
+
+    assert.that(centro.estaComplicado())
+  }
+
+  test "visita de tecnico" {
+    const br = new Bicicleta(color = "rojo",tornillosDesajustados = 11, perdidasDeAceite = 6)
+    const mv = new Magneto(color = "verde" , imantacion = 99)
+    const mg = new Magneto(color = "rojo")
+
+    centro.agregarAparato(br)
+    centro.agregarAparato(mv)
+    centro.agregarAparato(mg)
+
+    assert.that(centro.estaComplicado())
+
+    centro.visitaDeTecnico()
+
+    assert.notThat(centro.estaComplicado())
+  }
 }
